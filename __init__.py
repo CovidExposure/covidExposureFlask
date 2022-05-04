@@ -26,7 +26,12 @@ def create_app():
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
 
+    from .business import business as business_blueprint
+    app.register_blueprint(business_blueprint)
+
     return app
+
+    
 db = SQLAlchemy()
 if not exists("./db.sqlite"):
     db.create_all(app=create_app())
