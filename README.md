@@ -1,11 +1,11 @@
 # covidExposureFlask
 ## Run Example
+In parent directory (covidExposureFlask/../):
 ```
-$ cd ..
 $ export FLASK_APP=covidExposureFlask
 $ flask run
 ```
-In anohter terminal:
+In another terminal:
 ```
 $ python covidExposureFlask/test/integ_test.py
 ```
