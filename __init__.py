@@ -29,6 +29,9 @@ def create_app():
     from .business import business as business_blueprint
     app.register_blueprint(business_blueprint)
 
+    from .visitor import visitor as visitor_blueprint
+    app.register_blueprint(visitor_blueprint)
+
     return app
 
     
