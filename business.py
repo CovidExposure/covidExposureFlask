@@ -1,4 +1,3 @@
-import json
 from flask import request, Blueprint, jsonify
 from flask_login import current_user
 from .models import Business, VisitRecord
@@ -59,6 +58,10 @@ def getBusinessCheckInLink(business_id):
 def checkin_post(business_id):
     if not current_user.is_authenticated:
         return "please login", 403
+
+    business = Business.query.filter_by(id=business_id).first()
+    if not business:
+        return "business not found", 404
 
     visitor_id = current_user.get_id()
     timestamp = datetime.now()
