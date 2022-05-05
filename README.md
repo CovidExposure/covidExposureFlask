@@ -1,4 +1,11 @@
 # covidExposureFlask
+## Run Example
+```
+$ cd ..
+$ export FLASK_APP=covidExposureFlask
+$ flask run
+$ python covidExposureFlask/test/integ_test.py
+```
 ## APIs
 ###  Auth
 ```
@@ -20,7 +27,4 @@ GET /visitor/test_record
 POST /visitor/test_record {"is_positive": boolean, "time_tested": float}
 GET /visitor/status
 ```
-## Example
-```
-$ python test/integ_test.py
-```
+
