@@ -4,6 +4,9 @@
 $ cd ..
 $ export FLASK_APP=covidExposureFlask
 $ flask run
+```
+In anohter terminal:
+```
 $ python covidExposureFlask/test/integ_test.py
 ```
 ## APIs
