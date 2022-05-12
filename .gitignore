@@ -1,2 +1,10 @@
 __pycache__
 db.sqlite
+
+# Linux Environment Files
+bin/
+include/
+lib64
+lib/
+share/
+pyvenv.cfg
