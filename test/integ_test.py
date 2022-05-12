@@ -13,8 +13,8 @@ test_session_1.post(host+"/login", data={"email":"test1@test.com","password":"pa
 test_session_2.post(host+"/login", data={"email":"test2@test.com","password":"pass2","remember":True})
 test_session_3.post(host+"/login", data={"email":"test3@test.com","password":"pass3","remember":True})
 
-test_session_1.post(host+"/business", data={"county":"orange","latitude":111.11,"longitude":111.11,"name":"test_business_1","state":"CA","type":"TestType","zipcode":"00000"})
-test_session_1.post(host+"/business", data={"county":"orange","latitude":222.11,"longitude":222.11,"name":"test_business_2","state":"CA","type":"TestType","zipcode":"00000"})
+test_session_1.post(host+"/business", data={"country":"US","latitude":111.11,"longitude":111.11,"name":"test_business_1","state":"CA","city":"Irvine","address1":"1234 W 56 St.","address2":"Ste 789","zipcode":"00000","category":"Wine Bar"})
+test_session_1.post(host+"/business", data={"country":"US","latitude":222.11,"longitude":222.11,"name":"test_business_2","state":"CA","city":"San Francisco","address1":"2345 E 17 St.","zipcode":"00000","category":"Restaurant"})
 r = test_session_1.get(host+"/business")
 r.raise_for_status()
 business_id_1 = r.json()[0]['id']

@@ -1,7 +1,7 @@
+from unicodedata import category
 from . import db
 from flask_login import UserMixin
 from dataclasses import dataclass
-# from sqlalchemy.orm import relationship
 
 @dataclass
 class VisitRecord(db.Model):
@@ -46,28 +46,43 @@ class ExposureStatus(db.Model):
     timestamp = db.Column(db.DateTime)
 
 @dataclass
+class Location(db.Model):
+    address1: str
+    address2: str
+    city: str
+    zipcode: int
+    country: str
+    state: str
+
+    id = db.Column(db.Integer, primary_key=True)
+    address1 = db.Column(db.String(80))
+    address2 = db.Column(db.String(80))
+    city = db.Column(db.String(20))
+    country = db.Column(db.String(20))
+    state = db.Column(db.String(20))
+    zipcode = db.Column(db.Integer)
+
+@dataclass
 class Business(db.Model):
     id: int
     owner_id: int
-    county: str
     latitude: float
     longitude: float
     name: str
-    state: str
-    type: str
-    zipcode: int
+    location_id: int
+    location: Location
+    category: str
     visit_records: list[VisitRecord]
 
     id = db.Column(db.Integer, primary_key=True) # primary keys are required by SQLAlchemy
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    county = db.Column(db.String(20))
     latitude = db.Column(db.Float)
     longitude = db.Column(db.Float)
     name = db.Column(db.String(1000), unique=True)
-    state = db.Column(db.String(20))
-    type = db.Column(db.String(20))
-    zipcode = db.Column(db.Integer)
+    category = db.Column(db.String(20))
     visit_records = db.relationship("VisitRecord")
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'))
+    location = db.relationship("Location", uselist=False)
 
 @dataclass
 class User(UserMixin, db.Model):
