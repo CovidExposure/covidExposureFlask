@@ -1,6 +1,6 @@
 from flask import request, Blueprint, jsonify
 from flask_login import current_user
-from .models import Business, VisitRecord
+from .models import Business, VisitRecord, Location
 from . import db
 from datetime import datetime
 
@@ -28,13 +28,16 @@ def createBusiness():
         return "please login", 403
     # TODO(Duo Wang): refine with Google Map API
 
-    county = request.form.get('county')
     latitude = float(request.form.get('latitude'))
     longitude = float(request.form.get('longitude'))
     name = request.form.get('name')
-    state = request.form.get('state')
-    type = request.form.get('type')
+    category = request.form.get('category')
     zipcode = int(request.form.get('zipcode'))
+    address1 = request.form.get('address1')
+    address2 = request.form.get('address2')
+    country = request.form.get('country')
+    city = request.form.get('city')
+    state = request.form.get('state')
     owner_id = current_user.get_id()
 
 
@@ -43,7 +46,9 @@ def createBusiness():
     if business:
         return "business name already taken", 304
 
-    new_business = Business(county=county,latitude=latitude,longitude=longitude,name=name,state=state,type=type,owner_id=owner_id,zipcode=zipcode)
+    new_location = Location(address1=address1,address2=address2,country=country,state=state,zipcode=zipcode,city=city)
+    db.session.add(new_location)
+    new_business = Business(location_id=new_location.id,latitude=latitude,longitude=longitude,name=name,category=category,owner_id=owner_id)
     db.session.add(new_business)
     db.session.commit()
     
@@ -54,8 +59,8 @@ def getBusinessCheckInLink(business_id):
     return "/business/{business_id}/checkin"
 
 
-@business.route('/business/<business_id>/checkin', methods=['GET'])
-def checkin_post(business_id):
+@business.route('/business/<business_id>/checkin')
+def checkin(business_id):
     if not current_user.is_authenticated:
         return "please login", 403
 
