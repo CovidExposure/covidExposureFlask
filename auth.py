@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, request, flash
+from flask import Blueprint, render_template, redirect, url_for, request, flash, jsonify
 from . import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import User
@@ -21,10 +21,10 @@ def login_post():
     user = User.query.filter_by(email=email).first()
 
     if not user or not check_password_hash(user.password, password):
-        return redirect(url_for('auth.login'))
+        return jsonify({"success": False})
     
     login_user(user, remember=remember)
-    return redirect(url_for('main.profile'))
+    return jsonify({"success": True, "user_name": user.name})
 
 @auth.route('/signup')
 def signup():
@@ -39,17 +39,17 @@ def signup_post():
     user = User.query.filter_by(email=email).first()
 
     if user:
-        return redirect(url_for('auth.signup'))
+        return jsonify({"success": False, "Failure": "user_exists"})
 
     new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
 
     # add the new user to the database
     db.session.add(new_user)
     db.session.commit()
-    return redirect(url_for('auth.login'))
+    return jsonify({"success": True})
 
 @login_required
 @auth.route('/logout')
 def logout():
     logout_user()
-    return 'Logged Out'
+    return jsonify({"success": True})
