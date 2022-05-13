@@ -1,13 +1,14 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from os.path import exists
 from flask_login import LoginManager
 
 def create_app():
     app = Flask(__name__)
-
     app.config['SECRET_KEY'] = 'L84xevb9$6#ZzsdJ$jh'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    CORS(app)
 
     db.init_app(app)
     login_manager = LoginManager()

@@ -12,8 +12,6 @@ def login():
 
 @auth.route('/login', methods=['POST'])
 def login_post():
-
-
     email = request.form.get('email')
     password = request.form.get('password')
     remember = True if request.form.get('remember') else False
@@ -39,7 +37,7 @@ def signup_post():
     user = User.query.filter_by(email=email).first()
 
     if user:
-        return jsonify({"success": False, "Failure": "user_exists"})
+        return jsonify({"success": False, "failure": "user_exists"})
 
     new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
 
@@ -49,7 +47,7 @@ def signup_post():
     return jsonify({"success": True})
 
 @login_required
-@auth.route('/logout')
+@auth.route('/logout', methods=['POST'])
 def logout():
     logout_user()
     return jsonify({"success": True})
