@@ -16,7 +16,7 @@ $ python covidExposureFlask/test/integ_test.py
 ```
 POST /signup {"email": string, "password": string, "name": string}
 POST /login {"email": string, "password": string, "remember": boolean}
-GET /logout
+POST /logout
 ```
 
 ### Business
