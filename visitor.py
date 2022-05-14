@@ -36,7 +36,7 @@ def uploadTestRecord():
     if is_positive:
         handleExposure(visitor_id,time_tested)
 
-    return jsonify(new_test_record), 200
+    return jsonify(new_test_record), 201
 
 def handleExposure(visitor_id,time_tested):
     records = VisitRecord.query.with_entities(VisitRecord.business_id, VisitRecord.timestamp).filter(VisitRecord.timestamp > time_tested-timedelta(days=7), VisitRecord.visitor_id == visitor_id).all()
