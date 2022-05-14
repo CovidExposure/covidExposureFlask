@@ -1,3 +1,4 @@
+import json
 from flask import request, Blueprint, jsonify
 from flask_login import current_user
 from . import db
@@ -10,7 +11,7 @@ visitor = Blueprint('visitor', __name__)
 @visitor.route('/visitor/test_record')
 def getTestRecords():
     if not current_user.is_authenticated:
-        return "please login", 403
+        return jsonify({"success": False, "failure": "Please login"}), 403
 
     visitor_id = current_user.get_id()
     records = TestRecord.query.filter_by(visitor_id=visitor_id).all()
@@ -21,11 +22,11 @@ def getTestRecords():
 @visitor.route('/visitor/test_record', methods=['POST'])
 def uploadTestRecord():
     if not current_user.is_authenticated:
-        return "please login", 403
+        return jsonify({"success": False, "failure": "Please login"}), 403
 
     visitor_id = int(current_user.get_id())
-    is_positive = request.form.get('is_positive') == "true" or request.form.get('is_positive') == "True"
-    time_tested = datetime.fromtimestamp(float(request.form.get('time_tested')))
+    is_positive = request.form.get('isPositive') == "true" or request.form.get('isPositive') == "True"
+    time_tested = datetime.fromisoformat(request.form.get('timeTested'))
     timestamp = datetime.now()
 
     new_test_record = TestRecord(visitor_id=visitor_id,is_positive=is_positive,time_tested=time_tested,timestamp=timestamp)
@@ -50,7 +51,7 @@ def handleExposure(visitor_id,time_tested):
 @visitor.route('/visitor/status')
 def getStatus():
     if not current_user.is_authenticated:
-        return "please login", 403
+        return jsonify({"success": False, "failure": "Please login"}), 403
 
     visitor_id = current_user.get_id()
     statuses = ExposureStatus.query.filter_by(visitor_id=visitor_id).all()

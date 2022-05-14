@@ -19,7 +19,7 @@ def login_post():
     user = User.query.filter_by(email=email).first()
 
     if not user or not check_password_hash(user.password, password):
-        return jsonify({"success": False})
+        return jsonify({"success": False}), 403
     
     login_user(user, remember=remember)
     return jsonify({"success": True, "user_name": user.name})
@@ -37,14 +37,14 @@ def signup_post():
     user = User.query.filter_by(email=email).first()
 
     if user:
-        return jsonify({"success": False, "failure": "user_exists"})
+        return jsonify({"success": False, "failure": "User exists"}), 409
 
     new_user = User(email=email, name=name, password=generate_password_hash(password, method='sha256'))
 
     # add the new user to the database
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({"success": True})
+    return jsonify({"success": True}), 201
 
 @login_required
 @auth.route('/logout', methods=['POST'])
