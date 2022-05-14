@@ -1,16 +1,18 @@
 # covidExposureFlask
 ## Run Example
-In parent directory (covidExposureFlask/../):
+Navigate to parent directory (covidExposureFlask/../):
 ```
 $ export FLASK_APP=covidExposureFlask
 $ flask run
 ```
+
 In another terminal:
 ```
 $ python covidExposureFlask/test/integ_test.py
 ```
+
 ## APIs
-###  Auth
+### Auth
 ```
 POST /signup {"email": string, "password": string, "name": string}
 POST /login {"email": string, "password": string, "remember": boolean}
@@ -30,4 +32,3 @@ GET /visitor/test_record
 POST /visitor/test_record {"is_positive": boolean, "time_tested": float}
 GET /visitor/status
 ```
-
