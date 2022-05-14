@@ -1,17 +1,17 @@
-# covidExposureFlask
-## Run Example
-Navigate to parent directory (covidExposureFlask/../):
-```
-$ export FLASK_APP=covidExposureFlask
-$ flask run
-```
+# COVID Exposure Backend
 
-In another terminal:
-```
-$ python covidExposureFlask/test/integ_test.py
-```
+## Getting Started
+0. Set up a Virtual Environment (Recommended)
+   + [https://www.ics.uci.edu/~thornton/ics32/Notes/ThirdPartyLibraries/](https://www.ics.uci.edu/~thornton/ics32/Notes/ThirdPartyLibraries/)
+1. Navigate to the project directory and execute `pip install -r requirements.txt`
+2. Navigate to project's parent directory and run
+   ```
+   export FLASK_APP=covidExposureFlask
+   flask run
+   ```
+3. Open another terminal and type `python covidExposureFlask/test/integ_test.py` (Windows) or `python3 covidExposureFlask/test/integ_test.py` (Linux)
 
-## APIs
+## API Format
 ### Auth
 ```
 POST /signup {"email": string, "password": string, "name": string}
