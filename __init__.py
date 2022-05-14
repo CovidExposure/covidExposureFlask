@@ -8,7 +8,7 @@ def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'L84xevb9$6#ZzsdJ$jh'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
-    CORS(app)
+    CORS(app, supports_credentials=True)
 
     db.init_app(app)
     login_manager = LoginManager()
