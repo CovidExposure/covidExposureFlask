@@ -4,7 +4,6 @@ from . import db
 from .models import TestRecord, ExposureStatus, VisitRecord
 from datetime import datetime, timedelta
 
-
 visitor = Blueprint('visitor', __name__)
 
 @visitor.route('/visitor/test_record')
@@ -16,7 +15,7 @@ def getTestRecords():
     records = TestRecord.query.filter_by(visitor_id=visitor_id).all()
 
     # TODO(Duo Wang): pagination of records
-    return jsonify(records), 200
+    return jsonify({"success": True, "content": records})
 
 @visitor.route('/visitor/test_record', methods=['POST'])
 def uploadTestRecord():
@@ -35,7 +34,7 @@ def uploadTestRecord():
     if is_positive:
         handleExposure(visitor_id,time_tested)
 
-    return jsonify(new_test_record), 201
+    return jsonify({"success": True, "content": new_test_record}), 201
 
 def handleExposure(visitor_id,time_tested):
     records = VisitRecord.query.with_entities(VisitRecord.business_id, VisitRecord.timestamp).filter(VisitRecord.timestamp > time_tested-timedelta(days=7), VisitRecord.visitor_id == visitor_id).all()
@@ -54,4 +53,4 @@ def getStatus():
     statuses = ExposureStatus.query.filter_by(visitor_id=visitor_id).all()
 
     # TODO(Duo Wang): pagination of statuses
-    return jsonify(statuses), 200
+    return jsonify({"success": True, "content": statuses})
