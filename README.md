@@ -32,3 +32,14 @@ GET /visitor/test_record
 POST /visitor/test_record {"is_positive": boolean, "time_tested": float}
 GET /visitor/status
 ```
+
+## Docker Support
+Dockerfile is in the repository
+build using the command
+```
+docker build -f Dockerfile -t covidexposure ./ 
+```
+to run docker
+```
+docker run -ti -e FLASK_APP=covidExposure -p 5000:5000 covidexposure
+```
