@@ -11,7 +11,7 @@ business = Blueprint('business', __name__)
 @business.route('/business')
 def listBusinesses():
     if not current_user.is_authenticated:
-        return "please login", 403
+        return jsonify({"success": False, "failure": "Please login"}), 403
     # TODO(Duo Wang): refine with Google Map API
 
     owner_id = current_user.get_id()
@@ -19,13 +19,13 @@ def listBusinesses():
     businesses = Business.query.filter_by(owner_id=owner_id).all()
 
     # TODO(Duo Wang): pagination of visit_records
-    return jsonify(businesses), 200
+    return jsonify({"success": True, "content": businesses})
 
 
 @business.route('/business', methods=['POST'])
 def createBusiness():
     if not current_user.is_authenticated:
-        return "please login", 403
+        return jsonify({"success": False, "failure": "Please login"}), 403
     # TODO(Duo Wang): refine with Google Map API
 
     latitude = float(request.form.get('latitude'))
@@ -44,7 +44,7 @@ def createBusiness():
     business = Business.query.filter_by(name=name).first()
 
     if business:
-        return "business name already taken", 304
+        return jsonify({"success": False, "failure": "Business name already taken"}), 304
 
     new_location = Location(address1=address1,address2=address2,country=country,state=state,zipcode=zipcode,city=city)
     db.session.add(new_location)
@@ -52,21 +52,21 @@ def createBusiness():
     db.session.add(new_business)
     db.session.commit()
     
-    return getBusinessCheckInLink(new_business.id)
+    return jsonify({"success": True, "content": getBusinessCheckInLink(new_business.id)}), 201
 
 
 def getBusinessCheckInLink(business_id):
-    return "/business/{business_id}/checkin"
+    return f"/business/{business_id}/checkin"
 
 
 @business.route('/business/<business_id>/checkin')
 def checkin(business_id):
     if not current_user.is_authenticated:
-        return "please login", 403
+        return jsonify({"success": False, "failure": "Please login"}), 403
 
     business = Business.query.filter_by(id=business_id).first()
     if not business:
-        return "business not found", 404
+        return jsonify({"success": False, "failure": "Business not found"}), 404
 
     visitor_id = current_user.get_id()
     timestamp = datetime.now()
@@ -74,4 +74,4 @@ def checkin(business_id):
     db.session.add(new_visit_record)
     db.session.commit()
 
-    return jsonify(new_visit_record), 200
+    return jsonify({"success": True, "content": new_visit_record})
