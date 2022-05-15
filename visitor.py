@@ -40,9 +40,7 @@ def uploadTestRecord():
 def handleExposure(visitor_id,time_tested):
     records = VisitRecord.query.with_entities(VisitRecord.business_id, VisitRecord.timestamp).filter(VisitRecord.timestamp > time_tested-timedelta(days=7), VisitRecord.visitor_id == visitor_id).all()
     for business_id, time_visited in records:
-        print(business_id,time_visited)
         for exposurd_visitor, time_exposed in VisitRecord.query.with_entities(VisitRecord.visitor_id, VisitRecord.timestamp).filter(VisitRecord.timestamp >= time_visited-timedelta(hours=3), VisitRecord.timestamp <= time_visited+timedelta(hours=3), VisitRecord.business_id == business_id):
-            print(visitor_id,exposurd_visitor,time_exposed)
             new_exposure_status = ExposureStatus(visitor_id=exposurd_visitor,business_id=business_id,status="EXPOSED" if exposurd_visitor != visitor_id else "POSITIVE",time_exposed=time_exposed,timestamp=datetime.now())
             db.session.add(new_exposure_status)
     db.session.commit()

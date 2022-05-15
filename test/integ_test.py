@@ -13,12 +13,24 @@ test_session_1.post(host+"/login", data={"email":"test1@test.com","password":"pa
 test_session_2.post(host+"/login", data={"email":"test2@test.com","password":"pass2","remember":True})
 test_session_3.post(host+"/login", data={"email":"test3@test.com","password":"pass3","remember":True})
 
-test_session_1.post(host+"/business", data={"country":"US","name":"test_business_1","state":"CA","city":"Irvine","address1":"1234 W 56 St.","address2":"Ste 789","zipcode":"00000","category":"Wine Bar"})
-test_session_1.post(host+"/business", data={"country":"US","name":"test_business_2","state":"CA","city":"San Francisco","address1":"2345 E 17 St.","zipcode":"00000","category":"Restaurant"})
+test_session_1.post(host+"/business", data={"country":"US","name":"Donald Bren Hall (DBH)","state":"CA","city":"Irvine","address1":"Donald Bren Hall","zipcode":"92697"})
+test_session_1.post(host+"/business", data={"country":"AU","name":"Gelato Messina Randwick","state":"NSW","city":"Randwick","address1":"162 Barker Street","address2":"Shop G08 & G08a","zipcode":"2031"})
 r = test_session_1.get(host+"/business")
 r.raise_for_status()
-business_id_1 = r.json()[0]['id']
-business_id_2 = r.json()[1]['id']
+business_id_1 = None
+business_id_2 = None
+for business in r.json():
+    if business['name'] == "Donald Bren Hall (DBH)":
+        business_id_1 = business['id']
+        assert(int(business['location']['latitude']) == 33)
+        assert(int(business['location']['longitude']) == -117)
+    elif business['name'] == "Gelato Messina Randwick":
+        business_id_2 = business['id']
+        assert(int(business['location']['latitude']) == -33)
+        assert(int(business['location']['longitude']) == 151)
+assert(business_id_1)
+assert(business_id_2)
+
 
 test_session_1.get(host+"/business/%s/checkin" % business_id_1).raise_for_status()
 test_session_2.get(host+"/business/%s/checkin" % business_id_1).raise_for_status()
@@ -40,7 +52,7 @@ test_status_3 = r.json()
 r = test_session_2.get(host+"/visitor/test_record")
 r.raise_for_status()
 test_record_2 = r.json()
-test_session_2.post(host+"/visitor/test_record",data={"is_positive":True,"time_tested":datetime.timestamp(datetime.now())}).raise_for_status()
+test_session_2.post(host+"/visitor/test_record",data={"isPositive":True,"timeTested":datetime.isoformat(datetime.now())}).raise_for_status()
 r = test_session_2.get(host+"/visitor/test_record")
 r.raise_for_status()
 assert(len(r.json()) > len(test_record_2))

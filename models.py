@@ -53,6 +53,8 @@ class Location(db.Model):
     zipcode: int
     country: str
     state: str
+    latitude: float
+    longitude: float
 
     id = db.Column(db.Integer, primary_key=True)
     address1 = db.Column(db.String(80))
@@ -61,13 +63,13 @@ class Location(db.Model):
     country = db.Column(db.String(20))
     state = db.Column(db.String(20))
     zipcode = db.Column(db.Integer)
+    latitude = db.Column(db.Float)
+    longitude = db.Column(db.Float)
 
 @dataclass
 class Business(db.Model):
     id: int
     owner_id: int
-    latitude: float
-    longitude: float
     name: str
     location_id: int
     location: Location
