@@ -12,7 +12,6 @@ business = Blueprint('business', __name__)
 def listBusinesses():
     if not current_user.is_authenticated:
         return "please login", 403
-    # TODO(Duo Wang): refine with Google Map API
 
     owner_id = current_user.get_id()
 
@@ -26,10 +25,10 @@ def listBusinesses():
 def createBusiness():
     if not current_user.is_authenticated:
         return "please login", 403
+    
     # TODO(Duo Wang): refine with Google Map API
-
-    latitude = float(request.form.get('latitude'))
-    longitude = float(request.form.get('longitude'))
+    latitude = 111.11
+    longitude = 222.22
     name = request.form.get('name')
     category = request.form.get('category')
     zipcode = int(request.form.get('zipcode'))

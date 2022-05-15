@@ -1,4 +1,3 @@
-import json
 from flask import request, Blueprint, jsonify
 from flask_login import current_user
 from . import db
