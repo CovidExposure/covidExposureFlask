@@ -3,6 +3,7 @@ from flask_login import current_user
 from .models import Business, VisitRecord, Location
 from . import db
 from datetime import datetime
+from .googlemap import searchPlaceID, getPlaceCoords
 
 
 business = Blueprint('business', __name__)
@@ -28,10 +29,8 @@ def createBusiness():
         return jsonify({"success": False, "failure": "Please login"}), 403
     # TODO(Duo Wang): refine with Google Map API
 
-    latitude = float(request.form.get('latitude'))
-    longitude = float(request.form.get('longitude'))
     name = request.form.get('name')
-    category = request.form.get('category')
+    # category = request.form.get('category')
     zipcode = int(request.form.get('zipcode'))
     address1 = request.form.get('address1')
     address2 = request.form.get('address2')
@@ -40,15 +39,18 @@ def createBusiness():
     state = request.form.get('state')
     owner_id = current_user.get_id()
 
+    coords = getPlaceCoords(searchPlaceID(" ".join([address1,city,state,country])))
+    latitude = coords['lat']
+    longitude = coords['lng']
 
     business = Business.query.filter_by(name=name).first()
 
     if business:
         return jsonify({"success": False, "failure": "Business name already taken"}), 304
 
-    new_location = Location(address1=address1,address2=address2,country=country,state=state,zipcode=zipcode,city=city)
+    new_location = Location(address1=address1,address2=address2,country=country,state=state,zipcode=zipcode,city=city,latitude=latitude,longitude=longitude)
     db.session.add(new_location)
-    new_business = Business(location_id=new_location.id,latitude=latitude,longitude=longitude,name=name,category=category,owner_id=owner_id)
+    new_business = Business(location=new_location,name=name,owner_id=owner_id)
     db.session.add(new_business)
     db.session.commit()
     
