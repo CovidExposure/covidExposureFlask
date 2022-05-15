@@ -22,7 +22,7 @@ POST /logout
 ### Business
 ```
 GET /business
-POST /business {"country": string, "latitude": float, "longitude": float, "name": string, "state": string, "city": string, "address1": string, "address2": (optional) string, "zipcode": string, "category": string}
+POST /business {"country": string, "name": string, "state": string, "city": string, "address1": string, "address2": (optional) string, "zipcode": string, "category": string}
 GET /busiess/<business_id>/checkin
 ```
 

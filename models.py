@@ -1,5 +1,4 @@
 from __future__ import annotations
-from unicodedata import category
 from . import db
 from flask_login import UserMixin
 from dataclasses import dataclass
