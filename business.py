@@ -34,11 +34,11 @@ def createBusiness():
     # TODO(Duo Wang): refine with Google Map API
 
     name = request.form.get('name')
-    category = request.form.get('category')
+    # category = request.form.get('category')
     zipcode = int(request.form.get('zipcode'))
     address1 = request.form.get('address1')
     address2 = request.form.get('address2')
-    # country = request.form.get('country')
+    country = request.form.get('country')
     city = request.form.get('city')
     state = request.form.get('state')
     owner_id = current_user.get_id()

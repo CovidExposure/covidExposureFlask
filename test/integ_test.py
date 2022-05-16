@@ -19,7 +19,7 @@ r = test_session_1.get(host+"/business")
 r.raise_for_status()
 business_id_1 = None
 business_id_2 = None
-for business in r.json():
+for business in r.json()['content']:
     if business['name'] == "Donald Bren Hall (DBH)":
         business_id_1 = business['id']
         assert(int(business['location']['latitude']) == 33)
@@ -32,41 +32,41 @@ assert(business_id_1)
 assert(business_id_2)
 
 
-test_session_1.get(host+"/business/%s/checkin" % business_id_1).raise_for_status()
-test_session_2.get(host+"/business/%s/checkin" % business_id_1).raise_for_status()
-test_session_1.get(host+"/business/%s/checkin" % business_id_2).raise_for_status()
-test_session_3.get(host+"/business/%s/checkin" % business_id_2).raise_for_status()
+test_session_1.post(host+"/business/%s/checkin" % business_id_1).raise_for_status()
+test_session_2.post(host+"/business/%s/checkin" % business_id_1).raise_for_status()
+test_session_1.post(host+"/business/%s/checkin" % business_id_2).raise_for_status()
+test_session_3.post(host+"/business/%s/checkin" % business_id_2).raise_for_status()
 
 r = test_session_1.get(host+"/visitor/status")
 r.raise_for_status()
-test_status_1 = r.json()
+test_status_1 = r.json()['content']
 
 r = test_session_2.get(host+"/visitor/status")
 r.raise_for_status()
-test_status_2 = r.json()
+test_status_2 = r.json()['content']
 
 r = test_session_3.get(host+"/visitor/status")
 r.raise_for_status()
-test_status_3 = r.json()
+test_status_3 = r.json()['content']
 
 r = test_session_2.get(host+"/visitor/test_record")
 r.raise_for_status()
-test_record_2 = r.json()
+test_record_2 = r.json()['content']
 test_session_2.post(host+"/visitor/test_record",data={"isPositive":True,"timeTested":datetime.isoformat(datetime.now())}).raise_for_status()
 r = test_session_2.get(host+"/visitor/test_record")
 r.raise_for_status()
-assert(len(r.json()) > len(test_record_2))
+assert(len(r.json()['content']) > len(test_record_2))
 
 r = test_session_1.get(host+"/visitor/status")
 r.raise_for_status()
-assert(len(r.json()) > len(test_status_1))
-assert(r.json()[-1]['status'] == 'EXPOSED')
+assert(len(r.json()['content']) > len(test_status_1))
+assert(r.json()['content'][-1]['status'] == 'EXPOSED')
 
 r = test_session_2.get(host+"/visitor/status")
 r.raise_for_status()
-assert(len(r.json()) > len(test_status_2))
-assert(r.json()[-1]['status'] == 'POSITIVE')
+assert(len(r.json()['content']) > len(test_status_2))
+assert(r.json()['content'][-1]['status'] == 'POSITIVE')
 
 r = test_session_3.get(host+"/visitor/status")
 r.raise_for_status()
-assert(r.json() == test_status_3)
+assert(r.json()['content'] == test_status_3)
