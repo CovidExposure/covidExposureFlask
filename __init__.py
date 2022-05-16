@@ -4,10 +4,13 @@ from flask_sqlalchemy import SQLAlchemy
 from os.path import exists
 from flask_login import LoginManager
 
+UPLOAD_FOLDER = './temp'
+
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'L84xevb9$6#ZzsdJ$jh'
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
     CORS(app, supports_credentials=True)
 
     db.init_app(app)

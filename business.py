@@ -1,5 +1,9 @@
-from flask import request, Blueprint, jsonify
+from flask import request, Blueprint, jsonify, current_app
 from flask_login import current_user
+from pyzbar.pyzbar import decode
+from PIL import Image
+import os
+from werkzeug.utils import secure_filename
 from .models import Business, VisitRecord, Location
 from . import db
 from datetime import datetime
@@ -30,11 +34,11 @@ def createBusiness():
     # TODO(Duo Wang): refine with Google Map API
 
     name = request.form.get('name')
-    # category = request.form.get('category')
+    category = request.form.get('category')
     zipcode = int(request.form.get('zipcode'))
     address1 = request.form.get('address1')
     address2 = request.form.get('address2')
-    country = request.form.get('country')
+    # country = request.form.get('country')
     city = request.form.get('city')
     state = request.form.get('state')
     owner_id = current_user.get_id()
@@ -61,7 +65,24 @@ def getBusinessCheckInLink(business_id):
     return f"/business/{business_id}/checkin"
 
 
-@business.route('/business/<business_id>/checkin')
+@business.route('/business/decodeqr', methods=['POST'])
+def decode_qr():
+    if not current_user.is_authenticated:
+        return jsonify({"success": False, "failure": "Please login"}), 403
+
+    target = os.path.join(current_app.config['UPLOAD_FOLDER'])
+    if not os.path.isdir(target):
+        os.mkdir(target)
+    file = request.files['file'] 
+    filename = secure_filename(file.filename)
+    file.save("/".join([target, filename]))
+    dataList = decode(Image.open("/".join([target, filename])))
+    checkin_link = str(dataList[0].data.decode('ascii'))
+
+    return jsonify({"success": True, "content": checkin_link})
+
+
+@business.route('/business/<business_id>/checkin', methods=['POST'])
 def checkin(business_id):
     if not current_user.is_authenticated:
         return jsonify({"success": False, "failure": "Please login"}), 403
@@ -76,4 +97,4 @@ def checkin(business_id):
     db.session.add(new_visit_record)
     db.session.commit()
 
-    return jsonify({"success": True, "content": new_visit_record})
+    return jsonify({"success": True, "content": new_visit_record}), 201

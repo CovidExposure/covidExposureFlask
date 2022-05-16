@@ -2,4 +2,7 @@ flask
 flask-cors
 flask_login
 flask_sqlalchemy
+pyzbar
+pyzbar[scripts]
+Pillow
 requests
