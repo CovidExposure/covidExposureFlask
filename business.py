@@ -65,7 +65,7 @@ def getBusinessCheckInLink(business_id):
     return f"/business/{business_id}/checkin"
 
 
-@business.route('/business/decodeqr', methods=['POST'])
+@business.route('/business/qr-code', methods=['POST'])
 def decode_qr():
     if not current_user.is_authenticated:
         return jsonify({"success": False, "failure": "Please login"}), 403
