@@ -6,7 +6,7 @@
 1. Navigate to the project directory and execute `pip install -r requirements.txt`
 2. Navigate to project's parent directory and run
    ```
-   export FLASK_APP=covidExposureFlask
+   export FLASK_APP=covidExposureFlask GCP_MAPS_API_KEY=YOUR_DEV_KEY
    flask run
    ```
 3. Open another terminal and type `python covidExposureFlask/test/integ_test.py` (Windows) or `python3 covidExposureFlask/test/integ_test.py` (Linux)
