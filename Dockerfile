@@ -1,5 +1,6 @@
-FROM python:3.10-alpine
+FROM python:3.10-buster
 COPY . /covidExposure
+RUN apt update && apt install -y build-essential libzbar-dev 
 RUN pip install -r /covidExposure/requirements.txt
 WORKDIR /
 # FIXME: remove credentials in source code
