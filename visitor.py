@@ -1,7 +1,7 @@
 from flask import request, Blueprint, jsonify
 from flask_login import current_user
 from . import db
-from .models import TestRecord, ExposureStatus, VisitRecord
+from .models import TestRecord, VisitRecord
 from datetime import datetime, timedelta
 
 visitor = Blueprint('visitor', __name__)
@@ -37,25 +37,20 @@ def uploadTestRecord():
     return jsonify({"success": True, "content": new_test_record}), 201
 
 def handleExposure(visitor_id,time_tested):
-    records = VisitRecord.query.with_entities(VisitRecord.business_id, VisitRecord.timestamp).filter(VisitRecord.timestamp > time_tested-timedelta(days=7), VisitRecord.visitor_id == visitor_id).all()
+    records = VisitRecord.query.with_entities(VisitRecord.business_id, VisitRecord.timestamp).filter(VisitRecord.timestamp > time_tested-timedelta(days=7), VisitRecord.timestamp < time_tested+timedelta(days=7), VisitRecord.visitor_id == visitor_id).all()
+    VisitRecord.query.filter(VisitRecord.timestamp > time_tested-timedelta(days=7), VisitRecord.timestamp < time_tested+timedelta(days=7), VisitRecord.visitor_id == visitor_id).update({"status":"POSITIVE"})
     for business_id, time_visited in records:
-        # TODO(Duo Wang): merge multiple exposures from one visit
-        new_exposure_status = ExposureStatus(visitor_id=visitor_id,business_id=business_id,status="POSITIVE",time_exposed=time_visited,timestamp=datetime.now())
-        db.session.add(new_exposure_status)
-        for exposed_visitor, time_exposed in VisitRecord.query.with_entities(VisitRecord.visitor_id, VisitRecord.timestamp).filter(VisitRecord.timestamp >= time_visited-timedelta(hours=3), VisitRecord.timestamp <= time_visited+timedelta(hours=3), VisitRecord.business_id == business_id):
-            if exposed_visitor == visitor_id:
-                continue
-            new_exposure_status = ExposureStatus(visitor_id=exposed_visitor,business_id=business_id,status="EXPOSED",time_exposed=time_exposed,timestamp=datetime.now())
-            db.session.add(new_exposure_status)
+        VisitRecord.query.filter(VisitRecord.timestamp >= time_visited-timedelta(hours=3), VisitRecord.timestamp <= time_visited+timedelta(hours=3), VisitRecord.business_id == business_id, VisitRecord.status != "POSITIVE").update({"status":"EXPOSED"})
     db.session.commit()
 
-@visitor.route('/visitor/status')
-def getStatus():
+@visitor.route('/visitor/visit_records')
+def getVisitRecord():
     if not current_user.is_authenticated:
         return jsonify({"success": False, "failure": "Please login"}), 403
 
     visitor_id = current_user.get_id()
-    statuses = ExposureStatus.query.filter_by(visitor_id=visitor_id).all()
+    visits =  VisitRecord.query.filter_by(visitor_id=visitor_id).all()
 
-    # TODO(Duo Wang): pagination of statuses
-    return jsonify({"success": True, "content": statuses})
+    # TODO(Duo Wang): pagination of visits
+    return jsonify({"success": True, "content": visits})
+

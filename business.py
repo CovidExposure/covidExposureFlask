@@ -4,9 +4,9 @@ from pyzbar.pyzbar import decode
 from PIL import Image
 import os
 from werkzeug.utils import secure_filename
-from .models import Business, VisitRecord, Location
+from .models import Business, VisitRecord, Location, TestRecord
 from . import db
-from datetime import datetime
+from datetime import datetime, timedelta
 from .googlemap import searchPlaceID, getPlaceCoords
 
 
@@ -17,7 +17,6 @@ business = Blueprint('business', __name__)
 def listBusinesses():
     if not current_user.is_authenticated:
         return jsonify({"success": False, "failure": "Please login"}), 403
-    # TODO(Duo Wang): refine with Google Map API
 
     owner_id = current_user.get_id()
 
@@ -31,7 +30,6 @@ def listBusinesses():
 def createBusiness():
     if not current_user.is_authenticated:
         return jsonify({"success": False, "failure": "Please login"}), 403
-    # TODO(Duo Wang): refine with Google Map API
 
     name = request.form.get('name')
     # category = request.form.get('category')
@@ -93,7 +91,9 @@ def checkin(business_id):
 
     visitor_id = current_user.get_id()
     timestamp = datetime.now()
-    new_visit_record = VisitRecord(business_id=business_id,visitor_id=visitor_id,timestamp=timestamp)
+    latest_test_record = TestRecord.query.filter_by(visitor_id=visitor_id).order_by(TestRecord.time_tested.desc()).first()
+    status = "POSITIVE" if latest_test_record and latest_test_record.is_positive and latest_test_record.time_tested > timestamp-timedelta(days=7) else "NOT EXPOSED"
+    new_visit_record = VisitRecord(business_id=business_id,visitor_id=visitor_id,status=status,timestamp=timestamp)
     db.session.add(new_visit_record)
     db.session.commit()
 

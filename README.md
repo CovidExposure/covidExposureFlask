@@ -23,14 +23,14 @@ POST /logout
 ```
 GET /business
 POST /business {"country": string, "name": string, "state": string, "city": string, "address1": string, "address2": (optional) string, "zipcode": string, "category": string}
-GET /busiess/<business_id>/checkin
+POST /busiess/<business_id>/checkin
 ```
 
 ### Visitor
 ```
 GET /visitor/test_record
 POST /visitor/test_record {"is_positive": boolean, "time_tested": float}
-GET /visitor/status
+GET /visitor/visit_records
 ```
 
 ## Docker Support
